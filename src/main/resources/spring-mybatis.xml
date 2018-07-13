@@ -71,7 +71,6 @@
         <property name ="testOnReturn" value="${datasource.testOnReturn}" />
         <property name ="maxOpenPreparedStatements" value ="${datasource.maxOpenPreparedStatements}" />
     </bean >
-    <aop:aspectj-autoproxy/>
       <bean id="multipleDataSource" class="com.weidai.data.datasource.MultipleDataSource">
         <property name="defaultTargetDataSource" ref="dataSource1"/> <!--默认主库-->
         <property name="targetDataSources">
