@@ -11,7 +11,7 @@ target/
 .settings/
 .classpath
 logs/
-jdbc.propertis
+*jdbc.properties
 
 #some local files
 */.settings/
