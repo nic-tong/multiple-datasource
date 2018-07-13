@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+                       	http://www.springframework.org/schema/aop 
+						http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+                        http://www.springframework.org/schema/context 
+   						http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+	<context:component-scan base-package="com.weidai.data" />
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:jdbc.properties</value>
+				<value>classpath:log4j.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+    <bean id= "dataSource1" class="com.alibaba.druid.pool.DruidDataSource" destroy-method = "close" >
+        <!-- 数据库基本信息配置 -->
+        <property name ="url" value="${datasource.one.url}" />
+        <property name ="username" value="${datasource.one.username}" />
+        <property name ="password" value="${datasource.one.password}" />
+        <property name ="driverClassName" value="${datasource.driverClassName}" />
+        <property name ="filters" value="${datasource.filters}" />
+        <!-- 最大并发连接数 -->
+        <property name ="maxActive" value="${datasource.maxActive}" />
+        <!-- 初始化连接数量 -->
+        <property name ="initialSize" value="${datasource.initialSize}" />
+        <!-- 配置获取连接等待超时的时间 -->
+        <property name ="maxWait" value="${datasource.maxWait}" />
+        <!-- 最小空闲连接数 -->
+        <property name ="minIdle" value="${datasource.minIdle}" />
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name ="timeBetweenEvictionRunsMillis" value="${datasource.timeBetweenEvictionRunsMillis}" />
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name ="minEvictableIdleTimeMillis" value="${datasource.minEvictableIdleTimeMillis}" />
+        <property name ="validationQuery" value="${datasource.validationQuery}" />
+        <property name ="testWhileIdle" value="${datasource.testWhileIdle}" />
+        <property name ="testOnBorrow" value="${datasource.testOnBorrow}" />
+        <property name ="testOnReturn" value="${datasource.testOnReturn}" />
+        <property name ="maxOpenPreparedStatements" value ="${datasource.maxOpenPreparedStatements}" />
+    </bean >
+        <bean id= "dataSource2" class="com.alibaba.druid.pool.DruidDataSource" destroy-method = "close" >
+        <!-- 数据库基本信息配置 -->
+        <property name ="url" value="${datasource.two.url}" />
+        <property name ="username" value="${datasource.two.username}" />
+        <property name ="password" value="${datasource.two.password}" />
+        <property name ="driverClassName" value="${datasource.driverClassName}" />
+        <property name ="filters" value="${datasource.filters}" />
+        <!-- 最大并发连接数 -->
+        <property name ="maxActive" value="${datasource.maxActive}" />
+        <!-- 初始化连接数量 -->
+        <property name ="initialSize" value="${datasource.initialSize}" />
+        <!-- 配置获取连接等待超时的时间 -->
+        <property name ="maxWait" value="${datasource.maxWait}" />
+        <!-- 最小空闲连接数 -->
+        <property name ="minIdle" value="${datasource.minIdle}" />
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name ="timeBetweenEvictionRunsMillis" value="${datasource.timeBetweenEvictionRunsMillis}" />
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name ="minEvictableIdleTimeMillis" value="${datasource.minEvictableIdleTimeMillis}" />
+        <property name ="validationQuery" value="${datasource.validationQuery}" />
+        <property name ="testWhileIdle" value="${datasource.testWhileIdle}" />
+        <property name ="testOnBorrow" value="${datasource.testOnBorrow}" />
+        <property name ="testOnReturn" value="${datasource.testOnReturn}" />
+        <property name ="maxOpenPreparedStatements" value ="${datasource.maxOpenPreparedStatements}" />
+    </bean >
+    <aop:aspectj-autoproxy/>
+      <bean id="multipleDataSource" class="com.weidai.data.datasource.MultipleDataSource">
+        <property name="defaultTargetDataSource" ref="dataSource1"/> <!--默认主库-->
+        <property name="targetDataSources">
+            <map>
+                <entry key="dsone" value-ref="dataSource1"/>     <!--辅助aop完成自动数据库切换-->
+                <entry key="dstwo" value-ref="dataSource2"/>
+            </map>
+        </property>
+    </bean>
+    
+<!--     <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    声明式事务
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/> -->
+    
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="multipleDataSource" />
+        <property name="mapperLocations" value="classpath:mapper/*"></property>
+        <property name="plugins">
+			<array>
+				<bean class="com.github.pagehelper.PageInterceptor">
+					<property name="properties">
+						<!--使用下面的方式配置参数，一行配置一个 -->
+						<value>
+							rowBoundsWithCount=true
+						</value>
+					</property>
+				</bean>
+			</array>
+		</property>
+    </bean>
+
+    <!-- DAO接口所在包名，Spring会自动查找其下的类 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.weidai.data.mapper" />
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+    </bean>
+ <aop:aspectj-autoproxy/>
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate" scope="prototype">
+        <constructor-arg index="0" ref="sqlSessionFactory" />
+    </bean>
+</beans>

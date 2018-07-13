@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weidai.data.mapper.TExampleMapper">
+  <resultMap id="BaseResultMap" type="com.weidai.data.model.TExample">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="age" jdbcType="INTEGER" property="age" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_example
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.weidai.data.model.TExample">
+    insert into t_example (id, age, name, 
+      create_time)
+    values (#{id,jdbcType=INTEGER}, #{age,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.weidai.data.model.TExample">
+    update t_example
+    set age = #{age,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, age, name, create_time
+    from t_example
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, age, name, create_time
+    from t_example
+  </select>
+</mapper>
