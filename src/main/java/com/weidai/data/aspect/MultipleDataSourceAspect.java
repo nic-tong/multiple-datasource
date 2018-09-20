@@ -15,8 +15,8 @@ import com.weidai.data.datasource.MultipleDataSource;
  * @author nic 
  * @time：2018年7月13日 下午2:30:34
  */
-@Component
-@Aspect
+//@Component
+//@Aspect
 public class MultipleDataSourceAspect {
 
 	@Pointcut("execution(* com.weidai.data.mapper.*.insert(..))")
