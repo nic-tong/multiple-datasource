@@ -27,7 +27,7 @@ public class ShardingJdbcTest {
     @Test
     public void testMutilpeDataSource() {
         TExample tx = new TExample();
-        for (int i = 1; i< 200; i++) {
+        for (int i = 200; i< 300; i++) {
             tx.setId(i);
             tx.setAge(new Random().nextInt(300));
             tx.setName("asdasd" + i);
@@ -35,5 +35,4 @@ public class ShardingJdbcTest {
             System.out.println(JSON.toJSONString(tx));
         }
     }
-
 }
